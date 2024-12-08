@@ -38,7 +38,41 @@ func (d Day3) Part1(scanner *bufio.Scanner) (int, error) {
 }
 
 func (d Day3) Part2(scanner *bufio.Scanner) (int, error) {
-	return 0, nil
+	scanner.Split(bufio.ScanRunes)
+	text := ""
+	for scanner.Scan() {
+		text += scanner.Text()
+	}
+	startIdx := -1
+	result := 0
+	enabled := true
+	for i := 0; i < len(text); i++ {
+		if i > 4 {
+			if text[i-4:i] == "do()" {
+				enabled = true
+			}
+		}
+		if i > 7 {
+			if text[i-7:i] == "don't()" {
+				enabled = false
+			}
+		}
+		if text[i] == '(' {
+			startIdx = i
+		} else if text[i] == ')' {
+			if startIdx-3 >= 0 && enabled {
+				multiRes, err := d.DoMulInstruction(text[startIdx-3 : i+1])
+				if errors.Is(err, invalidInstruction) {
+					continue
+				} else if err != nil {
+					return 0, nil
+				}
+				result += multiRes
+			}
+			startIdx = -1
+		}
+	}
+	return result, nil
 }
 
 func (d Day3) DoMulInstruction(instruction string) (int, error) {
