@@ -14,6 +14,8 @@ type AoCHandler struct {
 func NewAoCHandler() *AoCHandler {
 	s := []Solution{
 		solutions.Day1{},
+		solutions.Day2{},
+		solutions.Day3{},
 	}
 	return &AoCHandler{
 		Solutions: s,
